@@ -1,13 +1,13 @@
 #!/usr/bin/env python3
+#-*- coding: utf-8 -*-
 
-import os
-import glob
-import random
-from math import log10
+# Programmiertechniken in der Computerlinguistik II
+# Uebung 5, Aufgabe 2
+# Autoren: Roger Ruetimann, Salome Wildermuth
+
 from collections import defaultdict
 from typing import Dict, List
 from nltk.util import ngrams
-from numpy.random import choice as np
 import random
 
 """Fragen:
@@ -48,7 +48,6 @@ class NGramModel:
         n_gram_lst = list(ngrams(tokens, n))
         freq = defaultdict(lambda: defaultdict(lambda: 0.0))
         i = 0
-
         for ngram in n_gram_lst:
             hist_tup = tuple(n_gram_lst[i][0:n-1])
             freq[hist_tup][n_gram_lst[i][n-1]] += 1
@@ -75,10 +74,8 @@ class NGramModel:
             gen_seq.append(follower)
         return gen_seq
 
-
 def main():
     ngram_model = NGramModel('michaeljackson.train', 5)
-
 
 if __name__ == '__main__':
     main()
