@@ -30,10 +30,11 @@ class NGramModel:
         print(self.generate_sentence(self._ngram_freqs, n))
 
     def extract_input_file(self, path_to_document: str, n: int):
-        token_lst = []
+        token_lst = ['<s>' for i in range(0,n-1)]
         with open(path_to_document, 'r') as f:
             for line in f:
-                token_lst = ['<s>' for i in range(0,n-1)]
+                for i in range(0,n-1):
+                    token_lst.append('<s>')
                 for word in line.split():
                     token_lst.append(word)
                 token_lst.append('</s>')
@@ -76,7 +77,7 @@ class NGramModel:
 
 
 def main():
-    ngram_model = NGramModel('michaeljackson.train', 2)
+    ngram_model = NGramModel('michaeljackson.train', 5)
 
 
 if __name__ == '__main__':
