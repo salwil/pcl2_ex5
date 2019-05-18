@@ -11,19 +11,9 @@ from numpy.random import choice as np
 import random
 
 """Fragen:
-    - müssen wir die Werte gehasht verarbeiten? Falls ja, wie kann man Daten wieder aus Hash extrahieren?
-    - Können wir die Codebeispiele jeweils raufladen im OLAT?
-    - Inputformat???
-    - Können wir davon ausgehen, dass Satzzeichen separate Tokens sind? Oder haben wir ein Inputformat mit Satzanfangs- 
-      und Satzende-Tags?
-    - zweidim. Dictionnaire: wie geht das, wenn Dict unhashable ist?
     - defaultdic gibt für jeden Schlüssel, der nicht abgelegt ist den Standardwert, der dafür implementiert wurde (z.B.
       mithilfe einer Lambdafunktion) zurück. Eignet sich gut für Wahrscheinlichkeiten.
-    - Ich fahre nach Hause. Ich gehe nach Hause. --> Wahrscheinlichkeiten für auf "Ich" folgende Wörter berechnen, inkl.
-      Smoothing. 
-    - Smoothing: Vokabulargrösse mitbeachten. P(fahre|Ich) = (1+1)/2+8 = 1/5, 8 ist Vokabulargrösse, die auch noch mit-
-      beachtet werden. Schwäche: 60% der Wahrscheinlichkeitsmasse der Wörter, die auf "Ich" folgen können, sind undefi-
-      niert.
+    - Ich fahre nach Hause. Ich gehe nach Hause. --> Wahrscheinlichkeiten für auf "Ich" folgende Wörter berechnen
     - Satzanfang nehmen wir nicht mit, Satzende schon (weil wir Satzende zur Generierung benötigen)
     - ngrams = defaultdic(lambda: defaultdict(lambda:1/Vokabulargroesse))
       --> ngrams[('<s>', '<s>')]['Ich'] * ngrams [('<s>', 'Ich')]['gehe'] * ngrams[('Ich', 'gehe')]['nach'] 
@@ -55,7 +45,6 @@ class NGramModel:
         Returns the ngrams the inputlines contain, alongside their frequency, as a dictionary.
         """
         n_gram_lst = list(ngrams(tokens, n))
-        print(n_gram_lst)
         freq = defaultdict(lambda: defaultdict(lambda: 0.0))
         i = 0
 
@@ -63,37 +52,27 @@ class NGramModel:
             hist_tup = tuple(n_gram_lst[i][0:n-1])
             freq[hist_tup][n_gram_lst[i][n-1]] += 1
             i += 1
-        print(freq)
-
         return freq
 
     def generate_sentence(self, freq: Dict[tuple, Dict[str, float]], n: int):
         sum_of_fitness = 0
         hist_lst = ['<s>' for i in range(0,n-1)]
         hist_tup = tuple(hist_lst)
-        print(hist_tup)
         gen_seq = []
         follower = ['<s>']
         """
         calculate 'fitness' of each follower-item
         """
         while (follower != '</s>'):
-            print(hist_tup)
             for key, fitness in freq[hist_tup].items():
-                print(freq[hist_tup])
                 sum_of_fitness += fitness
-                print(key)
-                print(fitness)
             follower = random.choices([freq for freq in freq[hist_tup].keys()],
                                      [fitness/sum_of_fitness for fitness in freq[hist_tup].values()], k=1)[0]
             hist_lst = [hist_lst[i] for i in range(1,n-1)]
-            print('Hist_list: ', hist_lst)
             hist_lst.append(follower)
             hist_tup = tuple(hist_lst)
-            print('Hist_tup: ', hist_tup)
             gen_seq.append(follower)
-            print(key, sum_of_fitness)
-        print(gen_seq)
+        return gen_seq
 
 
 def main():
