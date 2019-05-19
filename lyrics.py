@@ -32,8 +32,6 @@ def classify(train_file):
 @click.option("-n", prompt="Please enter the ngram-size from 1 to 5", type=click.IntRange(1,5), help="Ngram size. ")
 @click.option("--forever", is_flag=True, default=False, help="If we should never stop creating songlines anymore.")
 def generate(filename, l, n, forever):
-    print(l)
-    print(n)
     ngram_model = NGramModel(filename, l, n, forever)
 
 lyrics.add_command(classify)
