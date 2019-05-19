@@ -24,16 +24,21 @@ import random
 """
 
 class NGramModel:
-    def __init__(self, path_to_document: str, n: int):
-        self.input = self.extract_input_file(path_to_document, n)
-        self._ngram_freqs = self.get_ngram_freqs(self.input, n)
-        print(self.generate_sentence(self._ngram_freqs, n))
+    def __init__(self, path_to_document: str, nr_of_lines: int, n_gram_size: int, inf_loop=False):
+        self.input = self.extract_input_file(path_to_document, n_gram_size)
+        self._ngram_freqs = self.get_ngram_freqs(self.input, n_gram_size)
+        if inf_loop:
+            while inf_loop:
+                print(self.generate_sentence(self._ngram_freqs, n_gram_size))
+        else:
+            for i in range(0, nr_of_lines):
+                print(self.generate_sentence(self._ngram_freqs, n_gram_size))
 
-    def extract_input_file(self, path_to_document: str, n: int):
-        token_lst = ['<s>' for i in range(0,n-1)]
+    def extract_input_file(self, path_to_document: str, n_gram_size: int):
+        token_lst = ['<s>' for i in range(0,n_gram_size-1)]
         with open(path_to_document, 'r') as f:
             for line in f:
-                for i in range(0,n-1):
+                for i in range(0,n_gram_size-1):
                     token_lst.append('<s>')
                 for word in line.split():
                     token_lst.append(word)
@@ -41,22 +46,22 @@ class NGramModel:
         return(token_lst)
 
     @staticmethod
-    def get_ngram_freqs(tokens: List[str], n: int):
+    def get_ngram_freqs(tokens: List[str], n_gram_size: int):
         """
         Returns the ngrams the inputlines contain, alongside their frequency, as a dictionary.
         """
-        n_gram_lst = list(ngrams(tokens, n))
+        n_gram_lst = list(ngrams(tokens, n_gram_size))
         freq = defaultdict(lambda: defaultdict(lambda: 0.0))
         i = 0
         for ngram in n_gram_lst:
-            hist_tup = tuple(n_gram_lst[i][0:n-1])
-            freq[hist_tup][n_gram_lst[i][n-1]] += 1
+            hist_tup = tuple(n_gram_lst[i][0:n_gram_size-1])
+            freq[hist_tup][n_gram_lst[i][n_gram_size-1]] += 1
             i += 1
         return freq
 
-    def generate_sentence(self, freq: Dict[tuple, Dict[str, float]], n: int):
+    def generate_sentence(self, freq: Dict[tuple, Dict[str, float]], n_gram_size: int):
         sum_of_fitness = 0
-        hist_lst = ['<s>' for i in range(0,n-1)]
+        hist_lst = ['<s>' for i in range(0,n_gram_size-1)]
         hist_tup = tuple(hist_lst)
         gen_seq = []
         follower = ['<s>']
@@ -68,14 +73,8 @@ class NGramModel:
                 sum_of_fitness += fitness
             follower = random.choices([freq for freq in freq[hist_tup].keys()],
                                      [fitness/sum_of_fitness for fitness in freq[hist_tup].values()], k=1)[0]
-            hist_lst = [hist_lst[i] for i in range(1,n-1)]
+            hist_lst = [hist_lst[i] for i in range(1,n_gram_size-1)]
             hist_lst.append(follower)
             hist_tup = tuple(hist_lst)
             gen_seq.append(follower)
         return gen_seq
-
-def main():
-    ngram_model = NGramModel('michaeljackson.train', 5)
-
-if __name__ == '__main__':
-    main()
