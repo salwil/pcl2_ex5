@@ -29,10 +29,10 @@ class NGramModel:
         self._ngram_freqs = self.get_ngram_freqs(self.input, n_gram_size)
         if inf_loop:
             while inf_loop:
-                print(self.generate_sentence(self._ngram_freqs, n_gram_size))
+                print(' '.join(self.generate_sentence(self._ngram_freqs, n_gram_size)))
         else:
             for i in range(0, nr_of_lines):
-                print(self.generate_sentence(self._ngram_freqs, n_gram_size))
+                print(' '.join(self.generate_sentence(self._ngram_freqs, n_gram_size)))
 
     def extract_input_file(self, path_to_document: str, n_gram_size: int):
         token_lst = ['<s>' for i in range(0,n_gram_size-1)]
