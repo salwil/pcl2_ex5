@@ -76,5 +76,6 @@ class NGramModel:
             hist_lst = [hist_lst[i] for i in range(1,n_gram_size-1)]
             hist_lst.append(follower)
             hist_tup = tuple(hist_lst)
-            gen_seq.append(follower)
+            if follower != '</s>':
+                gen_seq.append(follower)
         return gen_seq
