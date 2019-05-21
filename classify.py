@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 #-*- coding: utf-8 -*-
 # Roger Rüttimann rroger 02-914-471
+# Salome Wildermuth salomew 10-289-544
+
 
 from collections import defaultdict
 from typing import Dict, Iterable, List
