@@ -3,7 +3,7 @@
 # Roger Rüttimann rroger 02-914-471'
 
 import click
-#from classify import LyricsClassifier
+from classify import LyricsClassifier
 from generate import NGramModel
 
 CONTEXT_SETTINGS = dict(help_option_names=['-h', '--help'])
