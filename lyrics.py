@@ -3,6 +3,7 @@
 # Roger Rüttimann rroger 02-914-471'
 
 import click
+from typing import Dict, Iterable, List
 from classify import LyricsClassifier
 from generate import NGramModel
 
@@ -13,9 +14,10 @@ def lyrics():
   pass
 
 @click.command(context_settings=CONTEXT_SETTINGS)
-# @click.option('-h', '--help', 'string')
-@click.argument('train_file')
-def classify(train_file):
+@click.argument('train_file', nargs=-1, type=click.Path())
+@click.option("--text", default=None, help="text to use as input (otherwise, standard input is used)")
+@click.option("--evaluate", is_flag=True, help="evaluate performance on the training set")
+def classify(train_file, text, evaluate):
   """
     Classify lyrics using Naïve Bayes.
 
@@ -23,7 +25,48 @@ def classify(train_file):
 
       train_file  files containing training data for each label; filename format: <label>.train
   """
-  click.echo('classify')
+
+  train_data = _open_train_data(train_file)
+  lyrics_classifier = LyricsClassifier(train_data=train_data)
+  _close_files(train_data)
+
+  if evaluate:
+    train_data = _open_train_data(train_file)
+    lyrics_classifier.evaluate(test_data=train_data)
+    _close_files(train_data)
+  else:
+    if text == None:
+      while(True):
+        text = click.prompt('', type=str, prompt_suffix='')
+        click.echo(lyrics_classifier.predict_label(text))
+    else:
+      click.echo(lyrics_classifier.predict_label(text))
+
+def _close_files(train_data: Dict[str, Iterable[str]]):
+  """Close open files in train_data
+
+    arguments:
+
+      train_data: A dict mapping labels to iterables of lines of
+                              (e.g. a file object).
+  """
+
+  for label in train_data:
+    train_data[label].close()
+
+def _open_train_data(train_file: Iterable[str]) -> Dict[str, Iterable[str]]:
+  """Open files in train_file and return Dict of label with open files as values.
+
+    arguments:
+
+      train_file  files containing training data for each label; filename format: <label>.train
+  """
+
+  train_data = {}
+  for entry in train_file:
+    label = entry.replace('.train', '')
+    train_data[label] = open(entry, 'r', encoding='UTF8')
+  return train_data
 
 
 @click.command(context_settings=CONTEXT_SETTINGS)

@@ -169,21 +169,31 @@ class LyricsClassifier:
             test_data: A dict mapping labels to iterables of lines
                        (e.g. a file object).
         """
-        label_true = []
-        label_pred = []
-        result = {}
+        statistics_per_label = defaultdict(dict)
+        micro_average_f1_sum = 0.0
         for label, lines in test_data.items():
+            statistics_per_label[label]['label_true'] = []
+            statistics_per_label[label]['label_pred'] = []
             for line in lines:
-                label_true.append(label)
-                label_pred.append(self.predict_label(line))
+                statistics_per_label[label]['label_true'].append(label)
+                statistics_per_label[label]['label_pred'].append(self.predict_label(line))
+        for label in statistics_per_label:
+            print('-'*25)
+            print(label)
+            print(f"recall: \t {recall_score(statistics_per_label[label]['label_true'], statistics_per_label[label]['label_pred'], average='micro'):.2%}")
+            print(f"accuracy: \t {accuracy_score(statistics_per_label[label]['label_true'], statistics_per_label[label]['label_pred']):.2%}")
+            print(f"precision: \t {precision_score(statistics_per_label[label]['label_true'], statistics_per_label[label]['label_pred'], average='micro'):.2%}")
+            f1 = f1_score(statistics_per_label[label]['label_true'], statistics_per_label[label]['label_pred'], average='micro')
+            micro_average_f1_sum += f1
+            print(f"f1: \t {f1:.2%}")
+        print ('-'*25)
 
-        result['recall'] = recall_score(label_true, label_pred, average='micro')
-        result['accuracy'] = accuracy_score(label_true, label_pred)
-        result['precision'] = precision_score(label_true, label_pred, average='micro')
-        result['f1'] = f1_score(label_true, label_pred, average='micro')
+        print(f'micro-average f1: {micro_average_f1_sum/len(statistics_per_label):.2%}')
 
-        print(result)
-        return result
+        # result['recall'] = recall_score(label_true, label_pred, average='micro')
+        # result['accuracy'] = accuracy_score(label_true, label_pred)
+        # result['precision'] = precision_score(label_true, label_pred, average='micro')
+        # result['f1'] = f1_score(label_true, label_pred, average='micro')
 
 
 if __name__ == '__main__':
@@ -205,6 +215,7 @@ if __name__ == '__main__':
         avgDict[key] = value / data_parts
     print(avgDict)
 
+    # helper to check word statistics
     def content_text(text):
         stopwords = set(nltk.corpus.stopwords.words('english'))
         with_stp = Counter()
