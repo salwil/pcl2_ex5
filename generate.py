@@ -1,27 +1,12 @@
 #!/usr/bin/env python3
 #-*- coding: utf-8 -*-
-
-# Programmiertechniken in der Computerlinguistik II
-# Uebung 5, Aufgabe 2
-# Autoren: Roger Ruetimann, Salome Wildermuth
+# Roger Rüttimann rroger 02-914-471
+# Salome Wildermuth salomew 10-289-544
 
 from collections import defaultdict
 from typing import Dict, List
 from nltk.util import ngrams
 import random
-
-"""Fragen:
-    - defaultdic gibt für jeden Schlüssel, der nicht abgelegt ist den Standardwert, der dafür implementiert wurde (z.B.
-      mithilfe einer Lambdafunktion) zurück. Eignet sich gut für Wahrscheinlichkeiten.
-    - Ich fahre nach Hause. Ich gehe nach Hause. --> Wahrscheinlichkeiten für auf "Ich" folgende Wörter berechnen
-    - Satzanfang nehmen wir nicht mit, Satzende schon (weil wir Satzende zur Generierung benötigen)
-    - ngrams = defaultdic(lambda: defaultdict(lambda:1/Vokabulargroesse))
-      --> ngrams[('<s>', '<s>')]['Ich'] * ngrams [('<s>', 'Ich')]['gehe'] * ngrams[('Ich', 'gehe')]['nach'] 
-      = P für "Ich gehe nach".
-    - ngrams = defaultdict(lambda: defaultdict(p: defaultdict(float) for p in range (0, self.n)))
-    - wir müssen die möglichen folgenden Elemente zufällig aber multipliziert mit ihrer Wahrscheinlichkeit ziehen.
-    - n --> History enthält n-1 Elemente, aber wir gehen tokenweise voran bei der Zeilengenerierung.
-"""
 
 class NGramModel:
 
@@ -82,7 +67,6 @@ class NGramModel:
 
     def generate_sentence(self, freq: Dict[tuple, Dict[str, float]], n_gram_size: int):
         """
-
         :param freq:                The ngrams the inputlines contain, alongside their frequency, as a two-dimensional
                                     dictionary, Dict[tuple, Dict[str, float]]
         :param n_gram_size:         size of n_grams on base of which we calculate the probabilites for follower tokens,
@@ -94,14 +78,17 @@ class NGramModel:
         hist_tup = tuple(hist_lst)
         gen_seq = []
         follower = ['<s>']
-        """
-        calculate 'fitness' of each follower-item
-        """
+        "calculate 'fitness' of each follower-item"
         while (follower != '</s>'):
             for key, fitness in freq[hist_tup].items():
                 sum_of_fitness += fitness
-            follower = random.choices([freq for freq in freq[hist_tup].keys()],
-                                     [fitness/sum_of_fitness for fitness in freq[hist_tup].values()], k=1)[0]
+            "If we have n_gram_size = 1, we can't make use of any frequencies, we just chose tokens randomly out of" \
+            "the input files."
+            if n_gram_size == 1:
+                follower = random.choices([freq for freq in freq[hist_tup].keys()], k=1)[0]
+            else:
+                follower = random.choices([freq for freq in freq[hist_tup].keys()],
+                                          [fitness/sum_of_fitness for fitness in freq[hist_tup].values()], k=1)[0]
             hist_lst = [hist_lst[i] for i in range(1,n_gram_size-1)]
             hist_lst.append(follower)
             hist_tup = tuple(hist_lst)

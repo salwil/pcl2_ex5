@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 #-*- coding: utf-8 -*-
-# Roger Rüttimann rroger 02-914-471'
+# Roger Rüttimann rroger 02-914-471
+# Salome Wildermuth salomew 10-289-544
 
 import click
 from typing import Dict, Iterable, List
@@ -72,10 +73,19 @@ def _open_train_data(train_file: Iterable[str]) -> Dict[str, Iterable[str]]:
 @click.command(context_settings=CONTEXT_SETTINGS)
 @click.argument('filename')
 @click.option("-l", default=1, help="The number of lines to generate.")
-@click.option("-n", prompt="Please enter the ngram-size from 1 to 5", type=click.IntRange(1,5), help="Ngram size. ")
-@click.option("--forever", is_flag=True, default=False, help="If we should never stop creating songlines anymore.")
+@click.option("-n", default=2, type=click.IntRange(1,5), help="Ngram size.")
+@click.option("--forever", is_flag=True, default=False, help="Never stop creating songlines.")
 def generate(filename, l, n, forever):
+    click.echo(filename)
+    """
+      Generates songtext lines based on n-gram-probabilities of song lines of an input file.
+
+      positional arguments:
+
+        train_file  files containing songtext lines as training data; filename format: .train
+    """
     ngram_model = NGramModel(filename, l, n, forever)
+
 
 lyrics.add_command(classify)
 lyrics.add_command(generate)
