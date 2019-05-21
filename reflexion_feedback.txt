@@ -1,0 +1,9 @@
+a) Fasse deine Erkenntnisse und Lernfortschritte in zwei Sätzen zusammen.
+
+Es war interessant selber einen Bayes Klassifikator zu bauen,
+aber auch recht aufwendig. Schön war auch zu sehen wie sich die a posteriori
+Formel vereinfacht. Der NGramm Generator war ebenfalls interessant und auch
+sinnvoll click zu verwenden um ein CLI zu bauen.
+
+b) Wie viel Zeit hast du in diese Übungen investiert?
+Recht viel, sicher ich allein 8h und Salome sicher auch einiges. 
