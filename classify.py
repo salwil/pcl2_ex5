@@ -178,6 +178,8 @@ class LyricsClassifier:
                 statistics_per_label[label]['label_true'].append(label)
                 statistics_per_label[label]['label_pred'].append(self.predict_label(line))
         for label in statistics_per_label:
+            # here are the reasons why the values are equal:
+            # https://simonhessner.de/why-are-precision-recall-and-f1-score-equal-when-using-micro-averaging-in-a-multi-class-problem/
             print('-'*25)
             print(label)
             print(f"recall: \t {recall_score(statistics_per_label[label]['label_true'], statistics_per_label[label]['label_pred'], average='micro'):.2%}")
@@ -185,16 +187,11 @@ class LyricsClassifier:
             print(f"precision: \t {precision_score(statistics_per_label[label]['label_true'], statistics_per_label[label]['label_pred'], average='micro'):.2%}")
             f1 = f1_score(statistics_per_label[label]['label_true'], statistics_per_label[label]['label_pred'], average='micro')
             micro_average_f1_sum += f1
-            print(f"f1: \t {f1:.2%}")
+            print(f"f1: \t \t {f1:.2%}")
         print ('-'*25)
-
-        print(f'micro-average f1: {micro_average_f1_sum/len(statistics_per_label):.2%}')
-
-        # result['recall'] = recall_score(label_true, label_pred, average='micro')
-        # result['accuracy'] = accuracy_score(label_true, label_pred)
-        # result['precision'] = precision_score(label_true, label_pred, average='micro')
-        # result['f1'] = f1_score(label_true, label_pred, average='micro')
-
+        f1_average = micro_average_f1_sum/len(statistics_per_label)
+        print(f'micro-average f1: {f1_average:.2%}')
+        return { 'f1': f1_average}
 
 if __name__ == '__main__':
     lc = None
