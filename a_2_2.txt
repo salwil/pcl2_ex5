@@ -1,0 +1,8 @@
+2.2 a)
+Nein. Wir benötigen Smoothing nur, wenn wir Wortfolgen in Sätzen Wahrscheinlichkeiten zuordnen wollen. Wenn wir aber basierend auf einem spezifischen Trainingsset Texte generieren wollen, wie 
+in dieser Aufgabe, dann müssen wir genau die Wahrscheinlichkeiten verwenden, die wir aus den vorhandenen Sätzen berechnen. 
+
+b) Je grösser das n, desto besser ist die Satzqualität. Der Grund dafür ist, dass wir bei grösseren n über eine grössere Sequenz von Tokens die Wahrscheinlichkeit der Abfolge berechnen. Wenn
+wir beispielsweise nur über Bigramme die Wahrscheinlichkeit bestimmen, dann ist immer nur die Wahrscheinlichkeit für ein Token und seinen Nachfolger relevant. Wenn wir aber 5-Gramme verwenden,
+wird für jeden Nachfolger bestimmt, wie hoch seine Wahrscheinlichkeit in genau der Kombination mit den 4 vorhergehenden Tokens ist. Dafür sind die Sätze bei kleinem n kreativer, weil es mehr
+Spielraum an Kombinationen gibt.
